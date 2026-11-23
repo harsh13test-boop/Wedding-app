@@ -143,10 +143,28 @@
     <!-- Main Container -->
     <main class="max-w-5xl mx-auto px-4 mt-4 space-y-5 flex-grow w-full">
 
-        <!-- Voice Compatibility Warning Notice if Speech Recognition is absent -->
-        <div id="speechUnsupportedNotice" class="hidden bg-amber-50 border border-amber-200 rounded-2xl p-3 text-xs text-amber-800 flex items-center gap-2">
-            <i class="fa-solid fa-circle-info text-amber-600 text-base shrink-0"></i>
-            <span>तुमच्या ब्राऊझरमध्ये मराठी व्हॉईस इनपुट सपोर्ट उपलब्ध नाही. कृपया कीबोर्डचा वापर करून नावे टाईप करा किंवा Chrome वापरा.</span>
+        <!-- Microphone Permission & iOS / Browser Voice Guide Banner -->
+        <div id="speechPermissionBanner" class="bg-amber-50 border border-amber-200 rounded-2xl p-3.5 text-xs text-amber-900 space-y-2 shadow-xs">
+            <div class="flex items-start justify-between gap-2">
+                <div class="flex items-start gap-2.5">
+                    <i class="fa-solid fa-microphone-lines text-amber-600 text-base shrink-0 mt-0.5"></i>
+                    <div class="space-y-1">
+                        <p class="font-bold text-amber-950" id="micStatusTitle">मायक्रोफोन व व्हॉईस इनपुट मार्गदर्शन (iPhone Safari / Chrome व Android)</p>
+                        <p id="micStatusDetail" class="leading-relaxed text-amber-800">
+                            मायक्रोफोन बटणावर दाबल्यावर परवानगी (Allow) द्या. परवानगी नाकारली असल्यास किंवा ब्राउझरमध्ये थेट व्हॉईस सपोर्ट नसल्यास खालील पायऱ्या करा:
+                        </p>
+                        <ul class="list-disc pl-4 space-y-0.5 text-[11px] text-amber-900/90">
+                            <li><strong>(अ) ब्राउझर परवानगी:</strong> iPhone मध्ये <strong>Settings &gt; Apps &gt; Safari</strong> (किंवा <strong>Chrome</strong>) मध्ये <strong>Microphone</strong> <strong>ON</strong> करा.</li>
+                            <li><strong>(ब) सुरक्षित HTTPS लिंक:</strong> ब्राउझर मायक्रोफोनसाठी पेज <strong>HTTPS</strong> लिंकवर उघडलेले असणे आवश्यक आहे.</li>
+                            <li><strong>(क) iPhone कीबोर्ड Dictation:</strong> कोणत्याही रकान्यावर (Input Box) टॅप करून कीबोर्डवरील <strong>मायक्रोफोन (🎤)</strong> दाबून थेट मराठीत बोलून टाईप करा.</li>
+                        </ul>
+                    </div>
+                </div>
+                <button type="button" onclick="requestMicrophonePermission()" class="touch-target shrink-0 bg-amber-600 hover:bg-amber-700 text-white font-semibold px-3 py-2 rounded-xl text-[11px] flex items-center gap-1.5 transition active:scale-95">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Mic परवानगी</span>
+                </button>
+            </div>
         </div>
 
         <!-- Input Form Section -->
@@ -160,11 +178,11 @@
                     
                     <!-- Person Name Input -->
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">व्यक्तिचे नाव *</label>
+                        <label for="personName" class="block text-xs font-bold text-gray-700 mb-1">व्यक्तिचे नाव *</label>
                         <div class="relative flex items-center">
-                            <input type="text" id="personName" required placeholder="उदा. अमोल पाटील" 
-                                class="w-full pl-3 pr-10 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition bg-gray-50/50">
-                            <button type="button" onclick="startSpeech('personName', 'nameMicBtn')" id="nameMicBtn" title="बोलून टाईप करा"
+                            <input type="text" id="personName" required autocomplete="name" enterkeyhint="next" placeholder="उदा. अमोल पाटील (किंवा कीबोर्ड 🎤)" 
+                                class="w-full pl-3 pr-11 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition bg-gray-50/50">
+                            <button type="button" onclick="startSpeech('personName', 'nameMicBtn')" id="nameMicBtn" title="बोलून टाईप करा" aria-label="व्यक्तिचे नाव बोलून टाईप करा"
                                 class="touch-target absolute right-1 p-2 text-rose-600 hover:bg-rose-50 rounded-lg transition flex items-center justify-center">
                                 <i class="fa-solid fa-microphone text-sm"></i>
                             </button>
@@ -173,11 +191,11 @@
 
                     <!-- Village/City Input -->
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">गावाचे नाव *</label>
+                        <label for="villageName" class="block text-xs font-bold text-gray-700 mb-1">गावाचे नाव *</label>
                         <div class="relative flex items-center">
-                            <input type="text" id="villageName" required placeholder="उदा. पुणे / सातारा" 
-                                class="w-full pl-3 pr-10 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition bg-gray-50/50">
-                            <button type="button" onclick="startSpeech('villageName', 'villageMicBtn')" id="villageMicBtn" title="बोलून टाईप करा"
+                            <input type="text" id="villageName" required enterkeyhint="next" placeholder="उदा. पुणे / सातारा (किंवा कीबोर्ड 🎤)" 
+                                class="w-full pl-3 pr-11 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition bg-gray-50/50">
+                            <button type="button" onclick="startSpeech('villageName', 'villageMicBtn')" id="villageMicBtn" title="बोलून टाईप करा" aria-label="गावाचे नाव बोलून टाईप करा"
                                 class="touch-target absolute right-1 p-2 text-rose-600 hover:bg-rose-50 rounded-lg transition flex items-center justify-center">
                                 <i class="fa-solid fa-microphone text-sm"></i>
                             </button>
@@ -186,11 +204,11 @@
 
                     <!-- Relationship Input -->
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">नातेसंबंध (Relationship)</label>
+                        <label for="relationship" class="block text-xs font-bold text-gray-700 mb-1">नातेसंबंध (Relationship)</label>
                         <div class="relative flex items-center">
-                            <input type="text" id="relationship" placeholder="उदा. मामा / मित्र / काका" 
-                                class="w-full pl-3 pr-10 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition bg-gray-50/50">
-                            <button type="button" onclick="startSpeech('relationship', 'relMicBtn')" id="relMicBtn" title="बोलून टाईप करा"
+                            <input type="text" id="relationship" enterkeyhint="next" placeholder="उदा. मामा / मित्र / काका" 
+                                class="w-full pl-3 pr-11 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition bg-gray-50/50">
+                            <button type="button" onclick="startSpeech('relationship', 'relMicBtn')" id="relMicBtn" title="बोलून टाईप करा" aria-label="नातेसंबंध बोलून टाईप करा"
                                 class="touch-target absolute right-1 p-2 text-rose-600 hover:bg-rose-50 rounded-lg transition flex items-center justify-center">
                                 <i class="fa-solid fa-microphone text-sm"></i>
                             </button>
@@ -199,11 +217,11 @@
 
                     <!-- Contact Number Input -->
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">संपर्क क्रमांक (Contact)</label>
+                        <label for="contactNum" class="block text-xs font-bold text-gray-700 mb-1">संपर्क क्रमांक (Contact)</label>
                         <div class="relative flex items-center">
-                            <input type="tel" id="contactNum" placeholder="उदा. 9876543210" 
-                                class="w-full pl-3 pr-10 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition bg-gray-50/50">
-                            <button type="button" onclick="startSpeech('contactNum', 'phoneMicBtn')" id="phoneMicBtn" title="बोलून टाईप करा"
+                            <input type="tel" id="contactNum" inputmode="tel" enterkeyhint="done" placeholder="उदा. 9876543210" 
+                                class="w-full pl-3 pr-11 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition bg-gray-50/50">
+                            <button type="button" onclick="startSpeech('contactNum', 'phoneMicBtn')" id="phoneMicBtn" title="बोलून टाईप करा" aria-label="संपर्क क्रमांक बोलून टाईप करा"
                                 class="touch-target absolute right-1 p-2 text-rose-600 hover:bg-rose-50 rounded-lg transition flex items-center justify-center">
                                 <i class="fa-solid fa-microphone text-sm"></i>
                             </button>
@@ -211,19 +229,31 @@
                     </div>
                 </div>
 
-                <!-- Combined Smart Voice Assistant & Submit -->
-                <div class="flex flex-col sm:flex-row gap-2.5 pt-1">
-                    <button type="button" onclick="startCombinedSpeech()" id="combinedMicBtn" 
-                        class="touch-target w-full sm:w-1/2 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition active:scale-95 text-xs md:text-sm">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        <span>स्मार्ट एकत्र बोला (उदा. "रमेश पाटील पुणे मामा 9876543210")</span>
-                    </button>
+                <!-- Smart Combined Voice / Text Parse Helper -->
+                <div class="bg-rose-50/60 border border-rose-100 rounded-2xl p-3 space-y-2">
+                    <div class="flex flex-col sm:flex-row gap-2.5">
+                        <button type="button" onclick="startCombinedSpeech()" id="combinedMicBtn" 
+                            class="touch-target w-full sm:w-1/2 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition active:scale-95 text-xs md:text-sm">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>स्मार्ट एकत्र बोला (उदा. "रमेश पाटील पुणे मामा 9876543210")</span>
+                        </button>
 
-                    <button type="submit" 
-                        class="touch-target w-full sm:w-1/2 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition active:scale-95 text-xs md:text-sm">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>यादीत जोडा</span>
-                    </button>
+                        <button type="submit" 
+                            class="touch-target w-full sm:w-1/2 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition active:scale-95 text-xs md:text-sm">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>यादीत जोडा</span>
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-2 pt-1">
+                        <input type="text" id="smartCombinedText" enterkeyhint="go"
+                            placeholder="किंवा सलग वाक्य टाईप/डिक्टेट करा: रमेश पाटील पुणे मामा 9876543210"
+                            class="flex-grow px-3 py-2.5 bg-white border border-rose-200 rounded-xl text-xs focus:ring-2 focus:ring-amber-500 outline-none">
+                        <button type="button" onclick="parseAndFillCombinedText(document.getElementById('smartCombinedText').value)"
+                            class="touch-target px-4 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 font-semibold rounded-xl text-xs transition shrink-0">
+                            रकान्यात भरा
+                        </button>
+                    </div>
                 </div>
             </form>
         </section>
@@ -433,15 +463,133 @@
         // App Initialization
         window.onload = function () {
             checkSpeechSupport();
+            attachInputSmartListeners();
             renderData();
         };
 
+        let activeRecognition = null;
+        let activeMicButtonId = null;
+
+        function updateMicBanner(title, detail, isAlert = false) {
+            const banner = document.getElementById('speechPermissionBanner');
+            const titleEl = document.getElementById('micStatusTitle');
+            const detailEl = document.getElementById('micStatusDetail');
+            if (!banner || !titleEl || !detailEl) return;
+
+            banner.classList.remove('hidden');
+            titleEl.innerText = title;
+            detailEl.innerText = detail;
+
+            if (isAlert) {
+                banner.className = "bg-red-50 border border-red-200 rounded-2xl p-3.5 text-xs text-red-900 space-y-2 shadow-xs";
+                titleEl.className = "font-bold text-red-950";
+                detailEl.className = "leading-relaxed text-red-800";
+            } else {
+                banner.className = "bg-amber-50 border border-amber-200 rounded-2xl p-3.5 text-xs text-amber-900 space-y-2 shadow-xs";
+                titleEl.className = "font-bold text-amber-950";
+                detailEl.className = "leading-relaxed text-amber-800";
+            }
+        }
+
         function checkSpeechSupport() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                const notice = document.getElementById('speechUnsupportedNotice');
-                if (notice) notice.classList.remove('hidden');
+            const isSecure = window.isSecureContext || location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+
+            if (!isSecure) {
+                updateMicBanner(
+                    "सुरक्षित HTTPS कनेक्शन आवश्यक आहे",
+                    "मायक्रोफोन व व्हॉईस इनपुटसाठी हे पेज HTTPS लिंकवर उघडा. किंवा इनपुट बॉक्सवर टॅप करून iPhone/Android कीबोर्डवरील मायक्रोफोन (🎤) वापरा.",
+                    true
+                );
+                return;
             }
+
+            if (!SpeechRecognition) {
+                updateMicBanner(
+                    "ब्राउझरमध्ये थेट Web Speech API उपलब्ध नाही (iOS / कीबोर्ड पर्याय)",
+                    "तुम्ही कोणत्याही इनपुट बॉक्सवर टॅप करून फोनच्या कीबोर्डवरील मायक्रोफोन (🎤) वापरून मराठीत बोलू शकता, किंवा 'स्मार्ट एकत्र' बॉक्समध्ये सलग बोलून 'रकान्यात भरा' दाबू शकता.",
+                    false
+                );
+            }
+        }
+
+        async function requestMicrophonePermission() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showToast("या ब्राउझरमध्ये थेट मायक्रोफोन परवानगी डायलॉग उपलब्ध नाही; कीबोर्ड मायक्रोफोन वापरा.", true);
+                updateMicBanner(
+                    "कीबोर्ड मायक्रोफोन (Dictation) वापरून मराठी बोला",
+                    "Settings > Apps > Safari (किंवा Chrome) मध्ये Microphone ON करा आणि इनपुट रकान्यावर टॅप करून कीबोर्डवरील मायक्रोफोन (🎤) दाबा.",
+                    false
+                );
+                return;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                stream.getTracks().forEach(track => track.stop());
+                showToast("मायक्रोफोन परवानगी मंजूर झाली!");
+                updateMicBanner(
+                    "मायक्रोफोन परवानगी सक्रिय आहे",
+                    "तुम्ही आता मायक्रोफोन बटणावर क्लिक करून किंवा कीबोर्डवरील मायक्रोफोनवरून मराठीत नाव आणि गाव बोलू शकता.",
+                    false
+                );
+            } catch (err) {
+                console.error("Microphone permission error:", err);
+                const msg = err && err.name === 'NotAllowedError'
+                    ? "मायक्रोफोन परवानगी नाकारली गेली आहे. Settings > Apps > Safari (किंवा Chrome) मध्ये Microphone ON करा किंवा कीबोर्ड मायक्रोफोन वापरा."
+                    : "मायक्रोफोन सुरू करताना अडचण आली. Settings मध्ये परवानगी तपासा किंवा कीबोर्डवरील मायक्रोफोन (🎤) वापरा.";
+                showToast(msg, true);
+                updateMicBanner("मायक्रोफोन परवानगी आवश्यक आहे", msg, true);
+            }
+        }
+
+        function attachInputSmartListeners() {
+            const combinedInput = document.getElementById('smartCombinedText');
+            if (combinedInput) {
+                combinedInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        parseAndFillCombinedText(combinedInput.value);
+                    }
+                });
+            }
+        }
+
+        function parseAndFillCombinedText(rawText) {
+            const transcript = (rawText || '').trim();
+            if (!transcript) {
+                showToast("कृपया आधी सलग नाव, गाव, नाते व नंबर बोला किंवा टाईप करा.", true);
+                return;
+            }
+
+            const words = transcript.replace(/\.$/, '').split(/\s+/);
+            let contact = '';
+            const cleanText = convertMarathiDigitsToEnglish(transcript);
+            const phoneMatch = cleanText.match(/\d{7,15}/);
+
+            if (phoneMatch) {
+                contact = phoneMatch[0];
+            }
+
+            const textWords = words.filter(w => !/\d/.test(convertMarathiDigitsToEnglish(w)));
+
+            if (textWords.length >= 3) {
+                document.getElementById('personName').value = textWords.slice(0, textWords.length - 2).join(' ');
+                document.getElementById('villageName').value = textWords[textWords.length - 2];
+                document.getElementById('relationship').value = textWords[textWords.length - 1];
+            } else if (textWords.length === 2) {
+                document.getElementById('personName').value = textWords[0];
+                document.getElementById('villageName').value = textWords[1];
+            } else if (textWords.length === 1) {
+                document.getElementById('personName').value = textWords[0];
+            }
+
+            if (contact) {
+                document.getElementById('contactNum').value = contact;
+            }
+
+            showToast("माहिती रकान्यांमध्ये भरली गेली आहे!");
+        }
         }
 
         function saveData() {
@@ -650,7 +798,7 @@
         function getSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) return null;
-            
+
             const recognition = new SpeechRecognition();
             recognition.lang = 'mr-IN';
             recognition.interimResults = false;
@@ -658,43 +806,99 @@
             return recognition;
         }
 
-        function startSpeech(inputId, micBtnId) {
-            const recognition = getSpeechRecognition();
+        function stopActiveRecognition() {
+            if (activeMicButtonId) {
+                const prevBtn = document.getElementById(activeMicButtonId);
+                if (prevBtn) prevBtn.classList.remove('mic-active');
+                activeMicButtonId = null;
+            }
+            if (activeRecognition) {
+                try {
+                    activeRecognition.abort();
+                } catch (e) {
+                    console.log("Stop recognition:", e);
+                }
+                activeRecognition = null;
+            }
+        }
 
+        async function ensureMicAccessBeforeSpeech() {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    stream.getTracks().forEach(track => track.stop());
+                    return true;
+                } catch (err) {
+                    console.warn("getUserMedia pre-check warning:", err);
+                    if (err && (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError')) {
+                        const msg = "मायक्रोफोन परवानगी नाकारली आहे. Settings > Apps > Safari/Chrome मध्ये Microphone ON करा किंवा कीबोर्डवरील 🎤 वापरा.";
+                        updateMicBanner("मायक्रोफोन परवानगी बंद आहे", msg, true);
+                        showToast(msg, true);
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        async function startSpeech(inputId, micBtnId) {
+            const targetInput = document.getElementById(inputId);
+            if (targetInput) targetInput.focus();
+
+            const hasAccess = await ensureMicAccessBeforeSpeech();
+            if (!hasAccess) return;
+
+            const recognition = getSpeechRecognition();
             if (!recognition) {
-                showToast("ब्राऊझरमध्ये व्हॉईस सपोर्ट नाही.", true);
+                updateMicBanner(
+                    "कीबोर्डवरील मायक्रोफोन (🎤) वापरून मराठी बोला",
+                    "या ब्राउझरमध्ये थेट Speech API नाही. रकान्यावर क्लिक केल्यावर iPhone/Android कीबोर्डवरील मायक्रोफोन (🎤) दाबून मराठीत बोला.",
+                    false
+                );
+                showToast("इनपुटवर टॅप करून कीबोर्डवरील मायक्रोफोन (🎤) वापरा.", true);
                 return;
             }
 
+            stopActiveRecognition();
             const micBtn = document.getElementById(micBtnId);
             micBtn.classList.add('mic-active');
+            activeRecognition = recognition;
+            activeMicButtonId = micBtnId;
 
             try {
                 recognition.start();
-            } catch(e) {
-                console.log("Recognition already started", e);
+            } catch (e) {
+                console.log("Recognition start error:", e);
+                stopActiveRecognition();
             }
 
             recognition.onresult = function (event) {
                 let speechResult = event.results[0][0].transcript.trim();
                 speechResult = speechResult.replace(/\.$/, '');
-                
+
                 if (inputId === 'contactNum') {
                     speechResult = convertMarathiDigitsToEnglish(speechResult).replace(/\D/g, '');
                 }
 
                 document.getElementById(inputId).value = speechResult;
-                micBtn.classList.remove('mic-active');
+                stopActiveRecognition();
             };
 
             recognition.onspeechend = function () {
-                recognition.stop();
-                micBtn.classList.remove('mic-active');
+                try { recognition.stop(); } catch (e) {}
+                stopActiveRecognition();
             };
 
-            recognition.onerror = function () {
-                micBtn.classList.remove('mic-active');
-                showToast("आवाज ओळखता आला नाही.", true);
+            recognition.onerror = function (event) {
+                stopActiveRecognition();
+                const errType = event && event.error ? event.error : '';
+                if (errType === 'not-allowed' || errType === 'service-not-allowed') {
+                    const msg = "मायक्रोफोन परवानगी नाकारली आहे. Settings > Safari/Chrome मध्ये Microphone ON करा किंवा कीबोर्डवरील 🎤 वापरा.";
+                    updateMicBanner("मायक्रोफोन परवानगी आवश्यक आहे", msg, true);
+                    showToast(msg, true);
+                } else {
+                    showToast("आवाज ओळखता आला नाही; कीबोर्डवरील 🎤 किंवा पुन्हा प्रयत्न करा.", true);
+                }
             };
         }
 
@@ -706,60 +910,59 @@
         }
 
         // Smart Combined Speech Dictation
-        function startCombinedSpeech() {
-            const recognition = getSpeechRecognition();
+        async function startCombinedSpeech() {
+            const combinedInput = document.getElementById('smartCombinedText');
+            if (combinedInput) combinedInput.focus();
 
+            const hasAccess = await ensureMicAccessBeforeSpeech();
+            if (!hasAccess) return;
+
+            const recognition = getSpeechRecognition();
             if (!recognition) {
-                showToast("ब्राऊझरमध्ये व्हॉईस सपोर्ट नाही.", true);
+                updateMicBanner(
+                    "सलग बोलण्यासाठी कीबोर्ड मायक्रोफोन (🎤) वापरा",
+                    "खालील 'रकान्यात भरा' बॉक्सवर टॅप करून कीबोर्डवरील मायक्रोफोन (🎤) दाबून बोला (उदा. 'रमेश पाटील पुणे मामा 9876543210') आणि 'रकान्यात भरा' दाबा.",
+                    false
+                );
+                showToast("खालील बॉक्समध्ये कीबोर्ड मायक्रोफोनने बोलून 'रकान्यात भरा' दाबा.", true);
                 return;
             }
 
+            stopActiveRecognition();
             const combinedBtn = document.getElementById('combinedMicBtn');
             combinedBtn.classList.add('mic-active');
+            activeRecognition = recognition;
+            activeMicButtonId = 'combinedMicBtn';
 
             try {
                 recognition.start();
-            } catch(e) {
-                console.log("Recognition already started", e);
+            } catch (e) {
+                console.log("Combined recognition start error:", e);
+                stopActiveRecognition();
             }
 
             recognition.onresult = function (event) {
                 const transcript = event.results[0][0].transcript.trim();
-                combinedBtn.classList.remove('mic-active');
-
-                const words = transcript.split(' ');
-                let contact = '';
-                const cleanText = convertMarathiDigitsToEnglish(transcript);
-                const phoneMatch = cleanText.match(/\d{8,12}/);
-                
-                if (phoneMatch) contact = phoneMatch[0];
-
-                const textWords = words.filter(w => !/\d/.test(convertMarathiDigitsToEnglish(w)));
-
-                if (textWords.length >= 3) {
-                    document.getElementById('personName').value = textWords.slice(0, textWords.length - 2).join(' ');
-                    document.getElementById('villageName').value = textWords[textWords.length - 2];
-                    document.getElementById('relationship').value = textWords[textWords.length - 1];
-                } else if (textWords.length === 2) {
-                    document.getElementById('personName').value = textWords[0];
-                    document.getElementById('villageName').value = textWords[1];
-                } else if (textWords.length === 1) {
-                    document.getElementById('personName').value = textWords[0];
-                }
-
-                if (contact) {
-                    document.getElementById('contactNum').value = contact;
-                }
+                stopActiveRecognition();
+                if (combinedInput) combinedInput.value = transcript;
+                parseAndFillCombinedText(transcript);
             };
 
             recognition.onspeechend = function () {
-                recognition.stop();
-                combinedBtn.classList.remove('mic-active');
+                try { recognition.stop(); } catch (e) {}
+                stopActiveRecognition();
             };
 
-            recognition.onerror = function () {
-                combinedBtn.classList.remove('mic-active');
-                showToast("पुन्हा प्रयत्न करा.", true);
+            recognition.onerror = function (event) {
+                stopActiveRecognition();
+                const errType = event && event.error ? event.error : '';
+                if (errType === 'not-allowed' || errType === 'service-not-allowed') {
+                    const msg = "मायक्रोफोन परवानगी नाकारली आहे. Settings > Safari/Chrome मध्ये Microphone ON करा किंवा कीबोर्डवरील 🎤 वापरा.";
+                    updateMicBanner("मायक्रोफोन परवानगी आवश्यक आहे", msg, true);
+                    showToast(msg, true);
+                } else {
+                    showToast("पुन्हा प्रयत्न करा किंवा कीबोर्डवरील 🎤 वापरा.", true);
+                }
             };
         }
 
